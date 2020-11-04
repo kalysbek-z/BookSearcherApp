@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#282A41"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/search_bar"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="-48dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Book searcher"
+        android:textColor="#F74F56"
+        android:textSize="24sp" />
+
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="64dp"
+        android:background="@drawable/edit_text_border"
+        android:gravity="center_vertical"
+        android:hint="Enter book's name"
+        android:inputType="text"
+        android:padding="7dp"
+        android:text=""
+        android:textColor="@android:color/darker_gray"
+        android:textColorHint="@android:color/darker_gray"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/search_button"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignTop="@id/search_bar"
+        android:layout_alignRight="@id/search_bar"
+        android:layout_alignBottom="@id/search_bar"
+        android:background="@drawable/rounded_corners_imgbutton"
+        android:src="@drawable/ic_baseline_search_24" />
+
+</RelativeLayout>
