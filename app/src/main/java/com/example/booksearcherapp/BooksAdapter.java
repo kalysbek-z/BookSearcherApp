@@ -1,9 +1,12 @@
 package com.example.booksearcherapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -18,6 +21,7 @@ import java.util.List;
 public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.ViewHolder> {
     private Context mContext;
     private List<Items> mItems;
+    private int ItemPosition;
 
     public BooksAdapter(Context context, List<Items> items) {
         mContext = context;
@@ -29,20 +33,18 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
-        return null;
+        return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Items book = mItems.get(position);
+        ItemPosition = position;
 
         //main image w Glide
         Glide
                 .with(mContext)
-                .load(book
-                        .getVolumeInfo()
-                        .getImageLinks()
-                        .smallThumbnail)
+                .load(book.getVolumeInfo().getImageLinks().getSmallThumbnail().replace("http", "https"))
                 .into(holder.bookImage);
 
         //set title
@@ -50,7 +52,7 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.ViewHolder> 
 
         //set author (if author is not specified view is invisible)
         if ((book.getVolumeInfo().getAuthors() != null)) {
-            holder.bookAuthor.setText(book.getVolumeInfo().getAuthors().toString());
+            holder.bookAuthor.setText(book.getVolumeInfo().getAuthors().toString().replace("[", "").replace("]", ""));
         } else {
             holder.bookAuthor.setVisibility(View.INVISIBLE);
         }
@@ -59,10 +61,21 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.ViewHolder> 
         holder.bookPublishedDate.setText(book.getVolumeInfo().getPublishedDate());
 
         //set pages num
-        holder.bookPages.setText(book.getVolumeInfo().getPageCount());
-
+        if (book.getVolumeInfo().getPageCount() != null) {
+            holder.bookPages.setText(book.getVolumeInfo().getPageCount().toString());
+        } else {
+            holder.bookPages.setVisibility(View.INVISIBLE);
+        }
         //set rating
         holder.bookRating.setRating((float) book.getVolumeInfo().getAverageRating());
+
+        holder.readButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent sourceIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(book.getVolumeInfo().getInfoLink()));
+                mContext.startActivity(sourceIntent);
+            }
+        });
     }
 
     @Override
@@ -77,6 +90,7 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.ViewHolder> 
         TextView bookPublishedDate;
         TextView bookPages;
         RatingBar bookRating;
+        Button readButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,6 +100,8 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.ViewHolder> 
             bookPublishedDate = (TextView) itemView.findViewById(R.id.date);
             bookPages = (TextView) itemView.findViewById(R.id.number_of_pages);
             bookRating = (RatingBar) itemView.findViewById(R.id.rating);
+            readButton = (Button) itemView.findViewById(R.id.read_button);
         }
     }
 }
+

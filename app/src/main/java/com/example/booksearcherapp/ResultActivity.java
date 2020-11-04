@@ -7,7 +7,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -32,26 +34,17 @@ public class ResultActivity extends AppCompatActivity {
     private static final String BASE_URL = "https://www.googleapis.com/books/v1/";
     BooksAdapter booksAdapter;
     ProgressBar loading;
-    Button readButton;
-    int position;
 
     RecyclerView recyclerView;
+    RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.recyclerview);
+        loading = (ProgressBar) findViewById(R.id.loading);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        loading = (ProgressBar) findViewById(R.id.rating);
-        readButton = (Button) findViewById(R.id.read_button);
-
-        readButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent sourceIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(listOfBooks.get()))
-            }
-        });
-
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN); //idk what it does but it helped
         checkConnection();
     }
 
@@ -59,7 +52,7 @@ public class ResultActivity extends AppCompatActivity {
         ConnectivityManager conManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = conManager.getActiveNetworkInfo();
 
-        if (networkInfo.isConnected() && networkInfo != null) {
+        if (networkInfo != null && networkInfo.isConnected()) {
             getResponse();
         } else {
             loading.setVisibility(View.GONE);
@@ -68,7 +61,7 @@ public class ResultActivity extends AppCompatActivity {
     }
 
     private void getResponse() {
-        String searchingBook = getIntent().getExtras().getString("Search").replace(" ", "+");
+        String searchingBook = getIntent().getStringExtra("Search").replace(" ", "+");
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -83,15 +76,19 @@ public class ResultActivity extends AppCompatActivity {
             public void onResponse(Call<BookList> call, Response<BookList> response) {
                 if (response.isSuccessful()) {
                     listOfBooks = response.body().getItems();
-                    loading.setVisibility(View.GONE);
                     booksAdapter = new BooksAdapter(ResultActivity.this, listOfBooks);
+                    loading.setVisibility(View.GONE);
+                    layoutManager = new LinearLayoutManager(ResultActivity.this);
+                    recyclerView.setLayoutManager(layoutManager);
                     recyclerView.setAdapter(booksAdapter);
                 }
             }
 
             @Override
             public void onFailure(Call<BookList> call, Throwable t) {
-                Toast.makeText(ResultActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ResultActivity.this, "чота не так", Toast.LENGTH_SHORT).show();
+                Log.e(ResultActivity.class.getSimpleName(), "FAIL: " + t.getMessage());
+                Log.e(ResultActivity.class.getSimpleName(), "failed at : " + call.request().url());
             }
         });
     }

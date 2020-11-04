@@ -16,9 +16,9 @@ public class VolumeInfo implements Serializable {
     @SerializedName("publishedDate")
     private String mPublishedDate;
     @SerializedName("pageCount")
-    private int mPageCount;
+    private Integer mPageCount;
     @SerializedName("averageRating")
-    private int mAverageRating;
+    private double mAverageRating;
     @SerializedName("imageLinks")
     @Expose
     private ImageLinks mImageLinks;
@@ -26,8 +26,8 @@ public class VolumeInfo implements Serializable {
     @Expose
     private String mInfoLink;
 
-    public VolumeInfo(String title, List<String> authors, String publishedDate, int pageCount,
-                      int averageRating, ImageLinks imageLinks, String infoLink) {
+    public VolumeInfo(String title, List<String> authors, String publishedDate, Integer pageCount,
+                      double averageRating, ImageLinks imageLinks, String infoLink) {
         //------------------------------------------------------------------------------------------
         mTitle = title;
         mAuthors = authors;
@@ -50,11 +50,11 @@ public class VolumeInfo implements Serializable {
         return mPublishedDate;
     }
 
-    public int getPageCount() {
+    public Integer getPageCount() {
         return mPageCount;
     }
 
-    public int getAverageRating() {
+    public double getAverageRating() {
         return mAverageRating;
     }
 
